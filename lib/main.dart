@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'quiz_data.dart';
 
 void main() {
   runApp(const QuizApp());
@@ -29,116 +30,40 @@ class QuizScreen extends StatefulWidget {
 }
 
 class _QuizScreenState extends State<QuizScreen> {
-  int currentQuestionIndex = 0;
-  int score = 0;
+  int _currentQuestionIndex = 0;
+  int _score = 0;
+  final Quiz _quiz = QuizData();
 
-  final List<Map<String, dynamic>> questions = [
-    {
-      'question': 'Apa kepanjangan dari CPU?',
-      'options': [
-        'Central Processing Unit',
-        'Computer Personal Unit',
-        'Central Program Utility',
-        'Computer Power Unit',
-      ],
-      'correctAnswer': 'Central Processing Unit',
-    },
-    {
-      'question': 'Bahasa pemrograman apa yang diciptakan pertama kali?',
-      'options': ['Python', 'C++', 'Java', 'Fortran'],
-      'correctAnswer': 'Fortran',
-    },
-    {
-      'question': 'Berapa bit dalam 1 byte?',
-      'options': ['4', '8', '16', '32'],
-      'correctAnswer': '8',
-    },
-    {
-      'question': 'Apa yang dimaksud dengan sistem informasi?',
-      'options': [
-        'Kumpulan perangkat keras tanpa perangkat lunak',
-        'Sekumpulan data yang tidak saling terkait ',
-        'Kombinasi antara teknologi, manusia, dan proses untuk mengelola informasi',
-        'Hanya perangkat lunak yang digunakan untuk mengolah data',
-      ],
-      'correctAnswer':
-          'Kombinasi antara teknologi, manusia, dan proses untuk mengelola informasi',
-    },
-    {
-      'question': 'Database Management System (DBMS) berfungsi untuk?',
-      'options': [
-        'Mengelola dan mengorganisir data dalam database',
-        'Menganalisis data tanpa menyimpannya',
-        'Menyimpan data tanpa kemampuan untuk mengubahnya',
-        'Hanya digunakan untuk menyimpan dokumen teks',
-      ],
-      'correctAnswer': 'Mengelola dan mengorganisir data dalam database',
-    },
-    {
-      'question':
-          'Manakah yang merupakan contoh perangkat lunak pengolah database?',
-      'options': [
-        'Microsoft Excel',
-        'MySQL',
-        'Adobe Photoshop',
-        'Microsoft Word',
-      ],
-      'correctAnswer': 'MySQL',
-    },
-    {
-      'question': 'Apa kepanjangan dari HTTP dalam konteks jaringan komputer?',
-      'options': [
-        'Hyper Text Transfer Protocol',
-        'High Transmission Text Protocol ',
-        'Hyperlink Transfer Text Page',
-        'High Technology Transfer Process',
-      ],
-      'correctAnswer': 'Hyper Text Transfer Protocol',
-    },
-    {
-      'question': 'Dalam pemrograman, algoritma adalah... ',
-      'option': [
-        'Bahasa pemrograman yang digunakan dalam coding',
-        'Proses penyimpanan data di dalam database',
-        'Urutan langkah-langkah logis untuk menyelesaikan masalah',
-        'Hardware yang digunakan untuk mengolah data',
-      ],
-      'correctAnswer':
-          'Urutan langkah-langkah logis untuk menyelesaikan masalah',
-    },
-    {
-      'question': 'Apa yang dimaksud dengan big data?',
-      'options': [
-        'Data yang hanya dapat diakses oleh perusahaan besar ',
-        'Kumpulan data yang sangat besar dan kompleks sehingga sulit dikelola dengan cara tradisional ',
-        'Jenis data yang hanya bisa disimpan di hard drive berkapasitas besar',
-        'Hanya sekumpulan angka yang tidak memiliki makna',
-      ],
-      'correctAnswer':
-          'Kumpulan data yang sangat besar dan kompleks sehingga sulit dikelola dengan cara tradisional',
-    },
-    {
-      'question':
-          'Manakah yang merupakan contoh dari Software as a Service (SaaS)?',
-      'options': ['Microsoft Word', 'Google Docs', 'Windows 11', 'Android'],
-      'correctAnswer': 'Google Docs',
-    },
-  ];
+  int get currentQuestionIndex => _currentQuestionIndex;
+  int get score => _score;
+  int get totalQuestions => _quiz.getQuestions().length;
 
-  void checkAnswer(String selectedAnswer) {
-    if (selectedAnswer == questions[currentQuestionIndex]['correctAnswer']) {
+  set currentQuestionIndex(int value) {
+    if (value >= 0 && value < totalQuestions) {
       setState(() {
-        score++;
+        _currentQuestionIndex = value;
       });
     }
+  }
 
-    if (currentQuestionIndex < questions.length - 1) {
+  set score(int value) {
+    if (value >= 0) {
       setState(() {
-        currentQuestionIndex++;
+        _score = value;
       });
+    }
+  }
+
+  void checkAnswer(bool selectedAnswer) {
+    if (selectedAnswer == _quiz.getCorrectAnswer(_currentQuestionIndex)) {
+      _score++;
+    }
+    if (_currentQuestionIndex < totalQuestions - 1) {
+      _currentQuestionIndex++;
     } else {
       showResult();
     }
+    setState(() {});
   }
 
   void showResult() {
@@ -146,21 +71,47 @@ class _QuizScreenState extends State<QuizScreen> {
       context: context,
       builder:
           (context) => AlertDialog(
-            title: const Text('Hasil Quiz', style: TextStyle(fontSize: 24)),
+            backgroundColor: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15),
+            ),
+            title: const Text(
+              'Hasil Quiz',
+              style: TextStyle(
+                fontFamily: 'sfpro',
+                fontWeight: FontWeight.w700,
+                fontSize: 24,
+                color: Colors.blueAccent,
+              ),
+            ),
             content: Text(
-              'Skor Anda: $score dari ${questions.length}',
-              style: const TextStyle(fontSize: 16),
+              'Skor Anda: $_score dari $totalQuestions',
+              style: const TextStyle(
+                fontFamily: 'sfpro',
+                fontSize: 18,
+                color: Colors.black87,
+              ),
             ),
             actions: [
               TextButton(
                 onPressed: () {
                   setState(() {
-                    currentQuestionIndex = 0;
-                    score = 0;
+                    _currentQuestionIndex = 0;
+                    _score = 0;
                   });
                   Navigator.pop(context);
                 },
-                child: const Text('Main Lagi', style: TextStyle(fontSize: 16)),
+                style: TextButton.styleFrom(
+                  backgroundColor: Colors.blueAccent,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                child: const Text(
+                  'Main Lagi',
+                  style: TextStyle(fontFamily: 'sfpro', color: Colors.white),
+                ),
               ),
             ],
           ),
@@ -171,48 +122,152 @@ class _QuizScreenState extends State<QuizScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Quiz Informatika'),
-        backgroundColor: Colors.green,
-        foregroundColor: Colors.white,
-        elevation: 4,
+        title: const Text(
+          'Quiz Informatika',
+          style: TextStyle(
+            fontFamily: 'sfpro',
+            fontWeight: FontWeight.w700,
+            fontSize: 22,
+            color: Colors.white,
+          ),
+        ),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Colors.blueAccent, Colors.indigo],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Pertanyaan ${currentQuestionIndex + 1}/${questions.length}',
-              style: const TextStyle(fontSize: 20),
-            ),
-            const SizedBox(height: 20),
-            Text(
-              questions[currentQuestionIndex]['question'],
-              style: const TextStyle(fontSize: 20),
-            ),
-            const SizedBox(height: 20),
-            ...questions[currentQuestionIndex]['options'].map((option) {
-              return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: ElevatedButton(
-                  onPressed: () => checkAnswer(option),
-                  style: ElevatedButton.styleFrom(
-                    minimumSize: const Size(double.infinity, 50),
-                  ),
-                  child: Text(
-                    option,
-                    style: const TextStyle(fontSize: 16),
-                    textAlign: TextAlign.center,
-                  ),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.grey[100]!, Colors.white],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+        child: Center(
+          child: Container(
+            constraints: const BoxConstraints(maxWidth: 600),
+            padding: const EdgeInsets.all(20.0),
+            child: Card(
+              elevation: 5,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Pertanyaan ${_currentQuestionIndex + 1}/$totalQuestions',
+                          style: const TextStyle(
+                            fontFamily: 'sfpro',
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.blueAccent,
+                          ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 5,
+                          ),
+                          decoration: BoxDecoration(
+                            color: const Color.fromRGBO(64, 196, 255, 0.1),
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          child: Text(
+                            'Skor: $_score',
+                            style: const TextStyle(
+                              fontFamily: 'sfpro',
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.blueAccent,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    Container(
+                      padding: const EdgeInsets.all(15),
+                      decoration: BoxDecoration(
+                        color: const Color.fromRGBO(64, 196, 255, 0.1),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Text(
+                        _quiz.getQuestionText(_currentQuestionIndex),
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          fontFamily: 'sfpro',
+                          fontSize: 20,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.black87,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        ElevatedButton(
+                          onPressed: () => checkAnswer(true),
+                          style: ElevatedButton.styleFrom(
+                            minimumSize: const Size(120, 50),
+                            backgroundColor: Colors.green[400],
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            elevation: 3,
+                          ),
+                          child: const Text(
+                            'True',
+                            style: TextStyle(
+                              fontFamily: 'sfpro',
+                              fontSize: 18,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                        ElevatedButton(
+                          onPressed: () => checkAnswer(false),
+                          style: ElevatedButton.styleFrom(
+                            minimumSize: const Size(120, 50),
+                            backgroundColor: Colors.red[400],
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            elevation: 3,
+                          ),
+                          child: const Text(
+                            'False',
+                            style: TextStyle(
+                              fontFamily: 'sfpro',
+                              fontSize: 18,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
-              );
-            }).toList(),
-            const Spacer(),
-            Text(
-              'Skor saat ini: $score',
-              style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
             ),
-          ],
+          ),
         ),
       ),
     );
