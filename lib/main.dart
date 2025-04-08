@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'quiz_data.dart';
 
-void main() {
-  runApp(const QuizApp());
-}
+void main() => runApp(const QuizApp());
 
 class QuizApp extends StatelessWidget {
   const QuizApp({super.key});
@@ -13,9 +11,11 @@ class QuizApp extends StatelessWidget {
     return MaterialApp(
       title: 'Quiz Informatika',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.teal,
         useMaterial3: true,
         fontFamily: 'sfpro',
+        scaffoldBackgroundColor: Colors.grey[900],
+        textTheme: const TextTheme(bodyMedium: TextStyle(color: Colors.white)),
       ),
       home: const QuizScreen(),
     );
@@ -40,17 +40,13 @@ class _QuizScreenState extends State<QuizScreen> {
 
   set currentQuestionIndex(int value) {
     if (value >= 0 && value < totalQuestions) {
-      setState(() {
-        _currentQuestionIndex = value;
-      });
+      setState(() => _currentQuestionIndex = value);
     }
   }
 
   set score(int value) {
     if (value >= 0) {
-      setState(() {
-        _score = value;
-      });
+      setState(() => _score = value);
     }
   }
 
@@ -70,26 +66,26 @@ class _QuizScreenState extends State<QuizScreen> {
     showDialog(
       context: context,
       builder:
-          (context) => AlertDialog(
-            backgroundColor: Colors.white,
+          (_) => AlertDialog(
+            backgroundColor: Colors.grey[850],
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15),
+              borderRadius: BorderRadius.circular(20),
             ),
             title: const Text(
-              'Hasil Quiz',
+              'Quiz Selesai!',
               style: TextStyle(
                 fontFamily: 'sfpro',
-                fontWeight: FontWeight.w700,
-                fontSize: 24,
-                color: Colors.blueAccent,
+                fontWeight: FontWeight.bold,
+                fontSize: 26,
+                color: Colors.tealAccent,
               ),
             ),
             content: Text(
-              'Skor Anda: $_score dari $totalQuestions',
+              'Skor Anda: $_score / $totalQuestions',
               style: const TextStyle(
                 fontFamily: 'sfpro',
-                fontSize: 18,
-                color: Colors.black87,
+                fontSize: 20,
+                color: Colors.white70,
               ),
             ),
             actions: [
@@ -102,15 +98,19 @@ class _QuizScreenState extends State<QuizScreen> {
                   Navigator.pop(context);
                 },
                 style: TextButton.styleFrom(
-                  backgroundColor: Colors.blueAccent,
+                  backgroundColor: Colors.teal,
                   foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 10,
+                  ),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(12),
                   ),
                 ),
                 child: const Text(
-                  'Main Lagi',
-                  style: TextStyle(fontFamily: 'sfpro', color: Colors.white),
+                  'Ulangi Quiz',
+                  style: TextStyle(fontFamily: 'sfpro', fontSize: 16),
                 ),
               ),
             ],
@@ -126,45 +126,38 @@ class _QuizScreenState extends State<QuizScreen> {
           'Quiz Informatika',
           style: TextStyle(
             fontFamily: 'sfpro',
-            fontWeight: FontWeight.w700,
-            fontSize: 22,
+            fontWeight: FontWeight.bold,
+            fontSize: 24,
             color: Colors.white,
           ),
         ),
         backgroundColor: Colors.transparent,
         elevation: 0,
         flexibleSpace: Container(
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [Colors.blueAccent, Colors.indigo],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
+              colors: [Colors.teal, Colors.teal[800]!],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
             ),
           ),
         ),
       ),
       body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Colors.grey[100]!, Colors.white],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-        ),
+        padding: const EdgeInsets.all(16.0),
         child: Center(
-          child: Container(
-            constraints: const BoxConstraints(maxWidth: 600),
-            padding: const EdgeInsets.all(20.0),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 700),
             child: Card(
-              elevation: 5,
+              color: Colors.grey[800],
+              elevation: 8,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15),
+                borderRadius: BorderRadius.circular(20),
               ),
               child: Padding(
-                padding: const EdgeInsets.all(20.0),
+                padding: const EdgeInsets.all(24.0),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -175,89 +168,85 @@ class _QuizScreenState extends State<QuizScreen> {
                             fontFamily: 'sfpro',
                             fontSize: 18,
                             fontWeight: FontWeight.w600,
-                            color: Colors.blueAccent,
+                            color: Colors.tealAccent,
                           ),
                         ),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 10,
-                            vertical: 5,
-                          ),
-                          decoration: BoxDecoration(
-                            color: const Color.fromRGBO(64, 196, 255, 0.1),
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-                          child: Text(
+                        Chip(
+                          label: Text(
                             'Skor: $_score',
                             style: const TextStyle(
                               fontFamily: 'sfpro',
                               fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.blueAccent,
+                              color: Colors.white,
                             ),
                           ),
+                          backgroundColor: Colors.teal[700],
+                          padding: const EdgeInsets.symmetric(horizontal: 10),
                         ),
                       ],
                     ),
                     const SizedBox(height: 20),
                     Container(
-                      padding: const EdgeInsets.all(15),
+                      padding: const EdgeInsets.all(20),
                       decoration: BoxDecoration(
-                        color: const Color.fromRGBO(64, 196, 255, 0.1),
-                        borderRadius: BorderRadius.circular(10),
+                        color: Colors.grey[700],
+                        borderRadius: BorderRadius.circular(15),
+                        border: Border.all(color: Colors.tealAccent, width: 1),
                       ),
                       child: Text(
                         _quiz.getQuestionText(_currentQuestionIndex),
                         textAlign: TextAlign.center,
                         style: const TextStyle(
                           fontFamily: 'sfpro',
-                          fontSize: 20,
+                          fontSize: 22,
                           fontWeight: FontWeight.w500,
-                          color: Colors.black87,
+                          color: Colors.white,
                         ),
                       ),
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 30),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         ElevatedButton(
                           onPressed: () => checkAnswer(true),
                           style: ElevatedButton.styleFrom(
-                            minimumSize: const Size(120, 50),
-                            backgroundColor: Colors.green[400],
+                            minimumSize: const Size(140, 60),
+                            backgroundColor: Colors.teal[600],
                             foregroundColor: Colors.white,
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
+                              borderRadius: BorderRadius.circular(15),
                             ),
-                            elevation: 3,
+                            elevation: 5,
+                            padding: const EdgeInsets.symmetric(vertical: 15),
                           ),
                           child: const Text(
                             'True',
                             style: TextStyle(
                               fontFamily: 'sfpro',
-                              fontSize: 18,
-                              color: Colors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
                         ),
                         ElevatedButton(
                           onPressed: () => checkAnswer(false),
                           style: ElevatedButton.styleFrom(
-                            minimumSize: const Size(120, 50),
-                            backgroundColor: Colors.red[400],
+                            minimumSize: const Size(140, 60),
+                            backgroundColor: Colors.red[700],
                             foregroundColor: Colors.white,
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
+                              borderRadius: BorderRadius.circular(15),
                             ),
-                            elevation: 3,
+                            elevation: 5,
+                            padding: const EdgeInsets.symmetric(vertical: 15),
                           ),
                           child: const Text(
                             'False',
                             style: TextStyle(
                               fontFamily: 'sfpro',
-                              fontSize: 18,
-                              color: Colors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
                         ),
